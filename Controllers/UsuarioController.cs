@@ -15,7 +15,11 @@ namespace WebApplication1.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Usuarios.ToListAsync());
+
+            
+            return View(await _context.Usuarios
+                .Include(u => u.UsuarioEmails)
+                .ToListAsync());
         }
     }
 }
