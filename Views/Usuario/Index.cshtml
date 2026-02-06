@@ -2,11 +2,23 @@
 
  <h1>Usuarios</h1>
 
+ <p>
+     <a asp-action="Create">Crear</a>
+ </p>
+
  <table class="table">
      <thead>
          <tr>
-             <th>Nombre</th>
-            <th>Email</th>
+            <th>
+                 Nombre
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Rol
+            </th>
+            <th></th>
          </tr>
          
              
@@ -19,6 +31,11 @@
                 <td>@Html.DisplayFor(e=>usuario.Nombre)</td>
 
                 <td>@Html.DisplayFor(e => usuario.EmailPrincipal)</td>
+                
+                <td>@Html.DisplayFor(e=> usuario.Rol.Nombre)</td>
+                <td>
+
+                </td>
             </tr>
            
                
