@@ -1,5 +1,6 @@
 ﻿@model List<Usuario>
 
+
  <h1>Usuarios</h1>
 
  <p>
@@ -34,7 +35,7 @@
                 
                 <td>@Html.DisplayFor(e=> usuario.Rol.Nombre)</td>
                 <td>
-
+                    <a asp-action="Edit" asp-route-id="@usuario.UsuarioId">Edit</a>
                 </td>
             </tr>
            

@@ -1,11 +1,12 @@
 ﻿@model WebApplication1.Models.Recurso
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Delete";
 }
 
-<h1>Details</h1>
+<h1>Eliminar</h1>
 
+<h3>Esta seguro de eliminar este recurso</h3>
 <div>
     <h4>Recurso</h4>
     <hr />
@@ -35,8 +36,10 @@
             @Html.DisplayFor(model => model.Descripcion)
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.RecursoId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="RecursoId" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
 </div>

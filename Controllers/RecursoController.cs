@@ -10,11 +10,11 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    public class RecurcesController : Controller
+    public class RecursoController : Controller
     {
         private readonly ReservasDbContext _context;
 
-        public RecurcesController(ReservasDbContext context)
+        public RecursoController(ReservasDbContext context)
         {
             _context = context;
         }

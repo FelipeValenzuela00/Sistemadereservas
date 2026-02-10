@@ -19,7 +19,7 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> Index()
         {
 
-            
+
             return View(await _context.Usuarios
                 .Include(u => u.UsuarioEmails)
                 .Include(u => u.Rol)
@@ -34,7 +34,7 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(UsuarioViewModel model)
         {
-            
+
 
             if (ModelState.IsValid)
             {
@@ -45,7 +45,7 @@ namespace WebApplication1.Controllers
                     PasswordHash = model.Password, // Aquí deberías aplicar un hash real en lugar de almacenar la contraseña en texto plano
                     FechaRegistro = DateTime.Now
                 };
-                
+
 
 
                 _context.Usuarios.Add(nuevoUsuario);
@@ -62,6 +62,60 @@ namespace WebApplication1.Controllers
             }
             ViewData["Roles"] = new SelectList(_context.Roles, "RolId", "Nombre", model.RolId);
             return View(model);
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var recurso = await _context.Usuarios.FindAsync(id);
+            ViewData["Roles"] = new SelectList(_context.Roles, "RolId", "Nombre");
+            if (recurso == null)
+            {
+                return NotFound();
+            }
+            return View(recurso);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("UsuarioId,Nombre,FechaRegistro,Rol,EmailPrincipal")] Usuario usuario)
+        {
+            if (id != usuario.UsuarioId)
+            {
+             return NotFound();
+
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(usuario);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UsuarioExists(usuario.UsuarioId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(usuario);
+
+        }
+
+        private bool UsuarioExists(int usuarioId)
+        {
+            return _context.Usuarios.Any(e => e.UsuarioId == usuarioId);
         }
     }
 }
