@@ -29,11 +29,21 @@
                 <select asp-for="RolId" class="form-control" asp-items="ViewBag.Roles"></select>
                 <span asp-validation-for="RolId" class="text-danger"></span>
             </div>
-            <div class="accept-policy">
-                <label asp-for="EmailPrincipal" class="control-label"></label>
-                <input asp-for="EmailPrincipal" class="form-control" />
-                <span asp-validation-for="EmailPrincipal" class="text-danger"></span>
+            <div class="form-group">
+                <label class="control-label">Email Principal</label>
+                @* Usamos name="emailPrincipal" para que coincida con el parámetro del controlador *@
+                <input name="emailPrincipal" value="@Model.EmailPrincipal" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+
+
+@section Scripts {
+@{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebApplication1.Models;
 using WebApplication1.Models.ViewModels;
+using WebApplication1.Models.Entities;
 
 namespace WebApplication1.Controllers
 {
@@ -71,30 +72,66 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            var recurso = await _context.Usuarios.FindAsync(id);
-            ViewData["Roles"] = new SelectList(_context.Roles, "RolId", "Nombre");
-            if (recurso == null)
+            var usuario = await _context.Usuarios
+                .Include(u => u.UsuarioEmails)
+                .FirstOrDefaultAsync(u => u.UsuarioId == id);
+            
+            if (usuario == null)
             {
                 return NotFound();
             }
-            return View(recurso);
+            ViewBag.Roles= new SelectList(_context.Roles, "RolId", "Nombre", usuario.RolId);
+            return View(usuario);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UsuarioId,Nombre,FechaRegistro,Rol,EmailPrincipal")] Usuario usuario)
+        public async Task<IActionResult> Edit(int id, [Bind("UsuarioId,Nombre,FechaRegistro,RolId")] Usuario usuario, string emailPrincipal)
         {
             if (id != usuario.UsuarioId)
             {
              return NotFound();
 
             }
+            ModelState.Remove("Rol");
+            ModelState.Remove("PasswordHash");
+            ModelState.Remove("usuarioEmails");
+
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(usuario);
+                    var usuarioEnDb = await _context.Usuarios
+                        .Include(u => u.UsuarioEmails)
+                        .FirstOrDefaultAsync(u => u.UsuarioId == id);
+
+
+                    if (usuarioEnDb == null) return NotFound();
+
+                    usuarioEnDb.Nombre = usuario.Nombre;
+                    usuarioEnDb.RolId = usuario.RolId;
+                    usuarioEnDb.FechaRegistro = usuario.FechaRegistro;
+
+
+                    var correoPrincipal = usuarioEnDb.UsuarioEmails
+                .FirstOrDefault(e => e.EsPrincipal == true);
+
+                    if (correoPrincipal != null)
+                    {
+                        correoPrincipal.Email = emailPrincipal;
+                    }
+                    else
+                    {
+                        usuarioEnDb.UsuarioEmails.Add(new UsuarioEmail
+                        {
+                            Email = emailPrincipal,
+                            EsPrincipal = true
+                        });
+                    }
+
+                   
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -107,10 +144,46 @@ namespace WebApplication1.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+               
             }
+            ViewBag.Roles = new SelectList(_context.Roles, "RolId", "Nombre", usuario.RolId);
+            ViewBag.EmailEscrito = emailPrincipal;
             return View(usuario);
 
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var usuario = await _context.Usuarios
+                .Include(u => u.UsuarioEmails)
+                .Include(u => u.Rol)
+                .FirstOrDefaultAsync(e => e.UsuarioId == id);
+
+            if(usuario == null)
+            {
+                return NotFound();
+            }
+           
+            return View(usuario);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario != null)
+            {
+                _context.Usuarios.Remove(usuario);
+              
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         private bool UsuarioExists(int usuarioId)

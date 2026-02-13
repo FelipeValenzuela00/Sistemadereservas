@@ -4,6 +4,7 @@ using WebApplication1.Models;
 using WebApplication1.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.Serialization.Formatters;
+using WebApplication1.Models.Entities;
 
 namespace WebApplication1.Data
 {

@@ -1,5 +1,8 @@
 ﻿@model List<Usuario>
 
+    @{
+    ViewData["Title"] = "Usuarios";
+    }
 
  <h1>Usuarios</h1>
 
@@ -35,8 +38,11 @@
                 
                 <td>@Html.DisplayFor(e=> usuario.Rol.Nombre)</td>
                 <td>
+                    <a asp-action="Delete" asp-route-id="@usuario.UsuarioId">Eliminar</a>
+                
                     <a asp-action="Edit" asp-route-id="@usuario.UsuarioId">Edit</a>
                 </td>
+
             </tr>
            
                

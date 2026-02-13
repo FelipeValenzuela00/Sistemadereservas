@@ -4,21 +4,21 @@ namespace WebApplication1.Models.ViewModels
 {
     public class UsuarioViewModel
     {
-        [Required]
+        [Required(ErrorMessage = ErrorMessages.Requerido)]
         public string Nombre { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = ErrorMessages.Requerido)]
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña")]
         public string Password { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = ErrorMessages.Requerido)]
         [Display (Name = "Rol del Usuario")]
         public int RolId { get; set; }
 
 
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = ErrorMessages.Requerido)]
+        [EmailAddress(ErrorMessage = ErrorMessages.EmailInvalido)]
         [Display(Name = "Correo Electrónico")]
         public string Email { get; set; }
 

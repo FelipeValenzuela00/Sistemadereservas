@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
+using WebApplication1.Models.Entities;
 
 namespace WebApplication1.Data;
 
